@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 function createData(
   name: string,
@@ -52,6 +53,7 @@ function DoList() {
               <TableCell>{row.description}</TableCell>
               <TableCell align="right">{row.duration}</TableCell>
               <TableCell align="right">{row.finished? "Finalizado": "Pendiente"}</TableCell>
+              <TableCell align="right"><PlayArrowIcon/></TableCell>
               <TableCell align="right"><EditIcon/></TableCell>
               <TableCell align="left"><DeleteIcon/></TableCell>
             </TableRow>

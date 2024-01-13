@@ -7,7 +7,7 @@ interface ButtonProps {
 
 function ButtonCreate({ title, disabled }: ButtonProps) {
     return (
-      <Button disabled={disabled} variant="contained">{title}</Button>
+      <Button disabled={disabled} variant="contained"  size="large" >{title}</Button>
     );
   }
 
