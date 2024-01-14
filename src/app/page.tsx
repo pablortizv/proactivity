@@ -9,8 +9,8 @@ export default function Home() {
     <main className="container mx-auto ">
       <CreatorDo />
       {/* <InProgressDo /> */}
-      {/* <Button title="Nueva tarea" disabled={false} />
-      <DoList/> */}
+      <Button title="Nueva tarea" disabled={false} />
+      <DoList/>
     </main>
   )
 }
