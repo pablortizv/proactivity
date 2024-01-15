@@ -62,7 +62,6 @@ function CreatorDo() {
     
     var dateFunction = ()=> {
         let dateVar = new Date()
-        console.log(formatDate(dateVar))
     }
     return (
         <div className='flex flex-row bg-slate-50 shadow'>
