@@ -1,22 +1,25 @@
+'use client'
+
 import * as React from 'react';
-import Button from "./components/button"
 import DoList from './components/doList';
 import CreatorDo from './components/creatorDo';
 import InProgressDo from './components/inProgressDo';
 
 export default function Home() {
-  var doInProgress = {
-    estimatedTime: 7200,
-    name: "Nombre de tarea",
-    description: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vitae quaerat quis reprehenderit sequi itaque harum ",
-    user:"André"
-  };
+  const [selectDo, setSelectDo] = React.useState('');
+  
+  var selectedTask = (idTask : string)=>{
+    setSelectDo(idTask)
+  }
+
+  const addTaks = () => {
+    // pendiente agregar funcionalidad agregar nueva tarea
+  }
+
   return (
-      <main className="container mx-auto ">
-        {/* <CreatorDo /> */}
-        <InProgressDo {...doInProgress}/>
-        {/* <Button title="Nueva tarea" disabled={false} /> */}
-        <DoList />
-      </main>
+    <main className="container mx-auto ">
+      {selectDo != ''? <InProgressDo selectDo = {selectDo}/> : <CreatorDo addTask={addTaks}/>}
+      <DoList selectDo={(idTask) => selectedTask(idTask)}/>
+    </main>
   )
 }

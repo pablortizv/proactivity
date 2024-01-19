@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,27 +11,38 @@ import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import Timer from './timer';
+import { getTasksList, deleteTaks } from "../firebase/api";
 
-function createData(
-  name: string,
-  description: string,
-  duration: number,
-  finished: boolean
-) {
-  return { name, description, duration, finished };
+interface DoListProps {
+  selectDo: (row : any)=> void;
 }
 
-const rows = [
-  createData('Tarea 1', "Esta es la tarea 1", 30, true),
-  createData('Tarea 2', "Esta es la tarea 2", 30, false),
-  createData('Tarea 3', "Esta es la tarea 3", 30, false),
-  createData('Tarea 4', "Esta es la tarea 4", 30, false),
-  createData('Tarea 5', "Esta es la tarea 5", 30, false),
-  createData('Tarea 6', "Esta es la tarea 1", 30, false),
-  createData('Tarea 7', "Esta es la tarea 7", 30, false),
-];
+function DoList({ selectDo }: DoListProps) {
+  const [taskList, setTaskList] = React.useState<string[]>([])
 
-function DoList() {
+ 
+  const getTasks = async ()=>{
+    const querySnapshot = await getTasksList();
+    var docs : any[] = [];
+    querySnapshot.forEach((doc : any) => {
+      docs.push({ ...doc.data(), id: doc.id });
+    });
+    setTaskList(docs)
+  }
+
+  React.useEffect(()=>{
+    getTasks()
+  }, [taskList])
+
+
+  const deleteTaskFunction = async(id: string) => {
+    if (window.confirm("¿Estás seguro de eliminar esta tarea?")) {
+      await deleteTaks(id);
+    }
+  };
+
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -42,20 +55,20 @@ function DoList() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {taskList.map((row: any) => (
             <TableRow
-              key={row.name}
+              key={row.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
               <TableCell>{row.description}</TableCell>
-              <TableCell align="right">{row.duration}</TableCell>
+              <TableCell align="right"><Timer totalSec={row.estimatedTime}/></TableCell>
               <TableCell align="right">{row.finished? "Finalizado": "Pendiente"}</TableCell>
-              <TableCell align="right"><PlayArrowIcon/></TableCell>
+              <TableCell align="right"><PlayArrowIcon onClick={()=>selectDo(row.id)} /></TableCell>
               <TableCell align="right"><EditIcon/></TableCell>
-              <TableCell align="left"><DeleteIcon/></TableCell>
+              <TableCell align="left"><DeleteIcon onClick={()=>deleteTaskFunction(row.id)} /></TableCell>
             </TableRow>
           ))}
         </TableBody>
