@@ -1,10 +1,17 @@
 import * as React from 'react';
 
 interface TimerProps {
-    totalSec: number;
+    totalMinutes?: number;
+    totalSeconds?: number;
 }
 
-function Timer({ totalSec }: TimerProps) {
+function Timer({ totalMinutes, totalSeconds }: TimerProps) {
+    let totalSec = 0
+    if(totalMinutes){
+        totalSec = totalMinutes * 60
+    } else{
+        totalSec = totalSeconds!
+    }
     //En base al tiempo estimado en segundos sacamos las horas, minutos y segundos para mostrarlo en un pequeño div
     var h = Math.floor((totalSec / 60) / 60)
     var min = Math.floor(totalSec / 60) % 60

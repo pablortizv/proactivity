@@ -13,19 +13,11 @@ import Modal from './modal';
 import { getTask, updateTask } from "../firebase/api";
 
 interface InProgressDoProps {
-    selectDo: string
+    selectDo: string;
+    addTask: (row : any)=> void;
 }
-function InProgressDo({ selectDo }: InProgressDoProps) {
-    const initialValues = {
-        creationDate: "2024-01-18",
-        description:"Lorem ipsun dolores",
-        estimatedTime: null,
-        lastUpdate: "2024-01-18",
-        name: "tarea 1",
-        realTime: 0,
-        status: "pending",
-        user: "admin"
-    }
+function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
+
     var initialModalText = {
         title:"¿Seguro que deseas reiniciar esta tarea?",
         body:"El progreso de la tarea se perderá y regresará al tiempo total estimado"
@@ -35,7 +27,7 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
     const [modalText, setModalText] = React.useState(initialModalText)
     const [inProgress, setInProgress] = React.useState(false)
     const [openModal, setOpenModal] = React.useState(false)
-    const [taskInProgress, setTaskInProgress] = React.useState(initialValues)
+    const [taskInProgress, setTaskInProgress] = React.useState<any | null>(null)
 
     
     const getTaskById = async (id : string) => {
@@ -65,9 +57,9 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
         if(taskInProgress?.realTime == 0 && taskInProgress.status == "complete"){
             return 0
         } else if(taskInProgress?.realTime !==0 ){
-            return taskInProgress?.realTime
+            return taskInProgress?.realTime! * 60
         } else if(taskInProgress.estimatedTime !==0 ){
-            return taskInProgress.estimatedTime
+            return taskInProgress.estimatedTime! * 60
         } else{
             return 0
         }
@@ -86,10 +78,10 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
 
     }, [duration, inProgress])
 
-
     const countDown = async (time: number) => {
         setTimeout(() => setDuration(time - 1), 1000)
     }
+
     const control = async(typeControl: string) => {
         // switch case para centralizar funcionalidad de los controles
         switch (typeControl) {
@@ -128,6 +120,7 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
     const handleModal = () => {
         setOpenModal(!openModal)
     }
+    
     const handleConfirm = () => {
         if(taskInProgress.status == "complete"){
             checkTask()
@@ -140,8 +133,7 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
 
     const checkTask = () => {
         try {
-            updateTask(selectDo, taskInProgress);
-           
+            updateTask(selectDo, taskInProgress); 
         } catch (error) {
             console.log(error)
         }
@@ -150,7 +142,7 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
     return (
         <div className='flex flex-row bg-slate-50 shadow'>
             <div className=' basis-1/4 content-center justify-center p-8'>
-                <ButtonCreate onClick={()=>{}} title={"Nueva Tarea"} disabled={false}></ButtonCreate>
+                <ButtonCreate onClick={addTask} title={"Nueva Tarea"} disabled={false}></ButtonCreate>
             </div>
             <div className='basis-3/4 w-full flex flex-row p-8'>
                 <div className='basis-3/4 sm:basis-1/2'>
@@ -159,7 +151,7 @@ function InProgressDo({ selectDo }: InProgressDoProps) {
                     <Typography variant="subtitle2" gutterBottom>{taskInProgress?.description}</Typography>
                 </div>
                 <div className='basis-1/4 sm:basis-1/2'>
-                    <Timer totalSec={duration} />
+                    <Timer totalSeconds={duration} />
                     {/* Botones de control de la tarea curso */}
                     {inProgress ? <PauseIcon onClick={() => control("pause")} /> : <PlayArrowIcon onClick={() => control("play")} />}
                     <StopIcon onClick={() => control("stop")}/>

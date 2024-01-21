@@ -1,0 +1,96 @@
+'use client'
+
+import * as React from 'react';
+import { VictoryChart, VictoryBar, VictoryAxis } from 'victory';
+
+interface ChartTaskProps {
+    taskList: any
+  }
+
+function ChartTask({ taskList }: ChartTaskProps) {
+    // const [taskList, setTaskList] = React.useState<string[]>([])
+    
+
+    const getTaskComplete = () => {
+        let qantity = 0
+        let taksFinished:any [] = []
+        {
+            taskList.map((row: any) => {
+                if (row.status == "complete"){
+                    qantity++
+                    taksFinished.push(row)
+                }  
+                })
+        }
+        return taksFinished
+    }
+    
+
+    React.useEffect(()=>{
+        console.log(getTaskinDays())
+      }, [])
+
+// Obtener días de la semana que pasó
+    const getWeek = () => {
+        let week:any [] = []
+        for (var i = 0; i <= 6; i++) {
+            let date = new Date();
+            date.setDate(date.getDate() - i);
+            const formattedDate = date.toLocaleDateString('mx-es', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            week.push(formattedDate)
+          }
+        return week
+    }
+
+    const getTaskinDays = () => {
+        let tasks = getTaskComplete();
+        let week = getWeek();
+        let dayTask:any [] = []
+        week.forEach(day => {
+            let counter = 0;
+            tasks.forEach(task => {
+                
+                if(day == task.lastUpdate){
+                    // console.log('titi', day)
+                    counter++
+                }
+            });
+            dayTask.push({dayWeek: day, count: counter})
+        });
+
+        return dayTask
+    }
+
+    return (
+        <div >
+            <h1>Tareas finalizadas: 0</h1>
+            <VictoryChart width={400}
+                domainPadding={{ x: 0 }}
+            >
+                <VictoryBar
+                    data={getTaskinDays()}
+                    x="dayWeek"
+                    y="count"
+                />
+                <VictoryAxis
+                    label="Días"
+                    style={{
+                        axisLabel: { padding: 30 }
+                    }}
+                />
+                <VictoryAxis dependentAxis
+                    label="Cantidad"
+                    style={{
+                        axisLabel: { padding: 30 }
+                    }}
+                />
+            </VictoryChart>
+        </div>
+    );
+}
+
+export default ChartTask

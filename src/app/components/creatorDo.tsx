@@ -8,14 +8,15 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import { createTask } from "../firebase/api";
+import { createTask, getTask, updateTask  } from "../firebase/api";
 
 
 interface CreatorDoProps {
     addTask: (row : any)=> void;
+    selectDo: string
   }
   
-function CreatorDo({ addTask }: CreatorDoProps) {
+function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     const initialValues = {
         name: "",
         description: "",
@@ -30,6 +31,29 @@ function CreatorDo({ addTask }: CreatorDoProps) {
     const [otherInput, setOtherInput] = React.useState(false);
     const [errorInput, setErrorInput] = React.useState(false)
     const [taskValues, setTaskValues] = React.useState(initialValues)
+
+    const getTaskById = async (id : string) => {
+        try {
+            const doc = await getTask(id);
+            const value = {
+                creationDate: doc?.data()?.creationDate,
+                description: doc?.data()?.description,
+                estimatedTime: doc?.data()?.estimatedTime,
+                lastUpdate: doc?.data()?.lastUpdate,
+                name: doc?.data()?.name,
+                realTime: doc?.data()?.realTime,
+                status: doc?.data()?.status,
+                user: doc?.data()?.user
+            }
+            setTaskValues({ ...value });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    React.useEffect(() => {
+        getTaskById(selectDo)
+    }, [selectDo])
 
     const handleInputChange = (e: any) => {
         const {name , value} = e.target;
@@ -81,21 +105,35 @@ function CreatorDo({ addTask }: CreatorDoProps) {
     }
 
 // 
-    const newTask = async () => {
+    const uploadTask = async () => {
         let date = dateFunction()
-        setTaskValues({...taskValues, creationDate: date, lastUpdate: date})
-        try {
-          await createTask(taskValues);
-          alert("Tarea creada correctamente")
-          setTaskValues(initialValues)
-        } catch (error) {
-            console.log(error)
+        if(selectDo !== ''){
+            setTaskValues({...taskValues, lastUpdate: date})
+            try {
+              await updateTask(selectDo, taskValues);
+              alert("Tarea actualizada correctamente")
+              setTaskValues(initialValues)
+              addTask('')
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        else{
+            setTaskValues({...taskValues, creationDate: date, lastUpdate: date})
+            try {
+              await createTask(taskValues);
+              alert("Tarea creada correctamente")
+              setTaskValues(initialValues)
+              addTask('')
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
     return (
         <div className='flex flex-row bg-slate-50 shadow'>
             <div className=' basis-1/4 content-center justify-center p-8'>
-                <ButtonCreate title={"Guardar"} disabled={false} onClick={newTask}/>
+                <ButtonCreate title={"Guardar"} disabled={false} onClick={uploadTask}/>
             </div>
             <div className='basis-3/4 w-full flex flex-row p-8'>
                 <div className=' w-full'>
