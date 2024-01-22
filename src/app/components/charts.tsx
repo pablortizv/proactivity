@@ -117,10 +117,6 @@ function ChartTask({ taskList }: ChartTaskProps) {
                             data={getTaskinDays()}
                             x="dayWeek"
                             y="count"
-                            animate={{
-                                duration: 2000,
-                                onLoad: { duration: 1000 }
-                            }}
                             style={{ data: { fill: "#7535cc", stroke: "#f6f4fe", strokeWidth: 2 } }}
                         />
                         <VictoryAxis
