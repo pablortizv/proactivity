@@ -23,10 +23,12 @@ export default function Home() {
     setTaskList(docs)
   }
 
+  // Nos traemos todas las tareas al cargar la app
   React.useEffect(()=>{
     getTasks();
   }, [])
 
+  // Verificamos si tenemos una tarea en localStorage para precargarla y persistir el contador de tiempo
   React.useEffect(()=>{
     if(localStorage.getItem("task")){
       setSelectDo(localStorage.getItem("task")!)
@@ -34,6 +36,7 @@ export default function Home() {
     }
   }, [])
 
+  // Función para eliminar una tarea del listado
   const deleteTaskFunction = async(id: string) => {
     if (window.confirm("¿Estás seguro de eliminar esta tarea?")) {
       await deleteTaks(id);
@@ -41,20 +44,21 @@ export default function Home() {
     }
   };
 
-
+  // Función para seleccionar una tarea del listado
   var selectedTask = (idTask : string, isEdit: boolean)=>{
     setIsEdit(isEdit)
     setSelectDo(idTask)
     setShowOptions(true)
   }
 
+  // Función para agregar una tarea nueva y cambiar la vista al creatorDo
   const addTaks = async() => {
     setSelectDo('')
     localStorage.setItem("task", '')
     await getTasks()
   }
 
-  // Sólo responsive
+  // Sólo responsive para mostrar / ocultar controles
   var className = showOptions ? 'show-controls' : 'hide-controls';
 
   return (
