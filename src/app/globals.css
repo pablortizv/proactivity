@@ -2,20 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-} */
-
 body {
   color: #6e6e6e !important;
   background: #fff
@@ -94,6 +80,9 @@ body {
   border-color: #7535cc;
   color:#7535cc
  }
+ .button-show-controls{
+  display: none;
+ }
 
  @media only screen and (max-width: 600px) {
   .control-timer {
@@ -135,6 +124,40 @@ body {
   .tabs button{
     width: 33%;
   }
+  .show-controls{
+    display: block;
+    animation: fade-in 1s;
+  }
+  .hide-controls{
+    animation: fade-out 1s;
+    display: none;
+    
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .button-show-controls{
+    display: block;
+    width: 100%;
+    background:#7535cc;
+    color: white;
+   }
  }
 
  @media only screen and (min-width: 768px) {
