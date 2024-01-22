@@ -84,10 +84,21 @@ body {
   display: none;
  }
 
+ .MuiCheckbox-colorPrimary {
+  color: #7535cc !important
+ }
  /* charts */
  tspan {
   font-size: 8px !important;
  }
+
+ .card-charts{
+  background: #f6f4fe !important;
+  border: 1px solid #ae93f2 !important;
+  margin: 15px 0 30px 
+ }
+
+
  @media only screen and (max-width: 600px) {
   .control-timer {
     flex-direction: column;
