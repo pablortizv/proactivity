@@ -7,6 +7,8 @@ import InProgressDo from './components/inProgressDo';
 import { getTasksList, deleteTaks } from "./firebase/api";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { createFinishedTasks } from './functions/createFinishedTask';
+
 
 export default function Home() {
   const [selectDo, setSelectDo] = React.useState('');
@@ -58,6 +60,14 @@ export default function Home() {
     await getTasks()
   }
 
+  // Función para crear 50 tareas finalizadas
+  const createFinishedTask = async () => {
+    let result = await createFinishedTasks()
+    if(result) {
+      alert("Tareas creadas correctamente")
+      await getTasks()
+    }
+  }
   // Sólo responsive para mostrar / ocultar controles
   var className = showOptions ? 'show-controls' : 'hide-controls';
 
@@ -67,7 +77,7 @@ export default function Home() {
         {selectDo !== '' && !isEdit? <InProgressDo selectDo = {selectDo} addTask={ addTaks} /> : <CreatorDo  selectDo = {selectDo} addTask={addTaks}/>  }
       </div>
       <button className='button-show-controls' onClick={()=>setShowOptions(!showOptions)}>Controles {showOptions? <KeyboardArrowUpIcon /> :<KeyboardArrowDownIcon /> }</button>
-      <DoList taskList={taskList} selectDo={(idTask: string, isEdit: boolean) => selectedTask(idTask, isEdit)} deleteTaskFunction={deleteTaskFunction} />
+      <DoList taskList={taskList} selectDo={(idTask: string, isEdit: boolean) => selectedTask(idTask, isEdit)} deleteTaskFunction={deleteTaskFunction} createFinishedTasks={createFinishedTask}/>
     </main>
   )
 }

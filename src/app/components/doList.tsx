@@ -19,16 +19,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Timer from './timer';
 import ChartTask from './charts';
 import ButtonCreate from './button';
-import { createFinishedTasks } from '../functions/createFinishedTask';
 
 
 interface DoListProps {
   selectDo: (row : any, isEdit : boolean)=> void;
   deleteTaskFunction: (row : any)=> void;
+  createFinishedTasks: ()=> void;
   taskList: any
 }
 
-function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
+function DoList({ selectDo, taskList, deleteTaskFunction, createFinishedTasks }: DoListProps) {
   const [list, setList] = React.useState(taskList);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [checked, setChecked] = React.useState({short: true, medium: true, long: true});
@@ -104,6 +104,8 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
       setList(taskFiltered)
     }
   }
+
+
 
   return (
     <Box sx={{ width: '100%' }}>

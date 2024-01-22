@@ -3,7 +3,7 @@ import { dateFunction } from "./dateFunctions";
 
 
 export const createFinishedTasks = async () => {
-    for (var i = 1; i <= 50; i++) {
+    for (var i = 1; i <= 1; i++) {
         let initialValues = {
             name: "",
             description: "",
@@ -29,9 +29,7 @@ export const createFinishedTasks = async () => {
               console.log(error)
           }
       }
-
-
-    
+      return true
 }
 
 function getRandomIntInclusive(min : number, max : number) {
