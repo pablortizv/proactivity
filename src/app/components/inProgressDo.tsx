@@ -15,7 +15,7 @@ import { dateFunction } from '../functions/dateFunctions';
 
 interface InProgressDoProps {
     selectDo: string;
-    addTask: (row : any)=> void;
+    addTask: ()=> void;
 }
 function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
 
@@ -124,6 +124,7 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
         // si la tarea está completa la mandamos a la función checkTask
         if(taskInProgress.status == "complete"){
             checkTask()
+            addTask()
         }else{
             setDuration(taskInProgress?.estimatedTime ? taskInProgress.estimatedTime : 0);
             setInProgress("play");
@@ -131,10 +132,11 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
         handleModal()
     }
 
-    const checkTask = () => {
+    const checkTask = async() => {
         // hacemos update de la tarea actual que ya fue completada
         try {
-            updateTask(selectDo, taskInProgress); 
+            await updateTask(selectDo, taskInProgress);
+            
         } catch (error) {
             console.log(error)
         }
