@@ -9,6 +9,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import { createTask, getTask, updateTask  } from "../firebase/api";
+import { dateFunction } from '../functions/dateFunctions';
 
 
 interface CreatorDoProps {
@@ -29,6 +30,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     }
     const [selectDuration, setSelectDuration] = React.useState('');
     const [otherInput, setOtherInput] = React.useState(false);
+    const [otherInputValue, setOtherInputValue] = React.useState(0);
     const [errorInput, setErrorInput] = React.useState(false)
     const [taskValues, setTaskValues] = React.useState(initialValues)
 
@@ -39,7 +41,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
                 creationDate: doc?.data()?.creationDate,
                 description: doc?.data()?.description,
                 estimatedTime: doc?.data()?.estimatedTime,
-                lastUpdate: doc?.data()?.lastUpdate,
+                lastUpdate: dateFunction(),
                 name: doc?.data()?.name,
                 realTime: doc?.data()?.realTime,
                 status: doc?.data()?.status,
@@ -52,7 +54,12 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     };
 
     React.useEffect(() => {
-        getTaskById(selectDo)
+        if(selectDo !== ''){
+            getTaskById(selectDo)
+        } else{
+            setTaskValues({...taskValues, creationDate: dateFunction(), lastUpdate: dateFunction()})
+        }
+        
     }, [selectDo])
 
     const handleInputChange = (e: any) => {
@@ -65,7 +72,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
         } else if(value !== "otro" && name == "estimatedTime"){
             setOtherInput(false);
             setSelectDuration(value);
-            setTaskValues({...taskValues, [name]: value})
+            setTaskValues({...taskValues, [name]: value * 60})
         } else if(name == "customEstimatedTime"){
             handleChangeOtherTime(value)
         }
@@ -77,38 +84,38 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     const handleChangeOtherTime = (time: number)=>{
         // Se cambia a number para poder verificar tiempo máximo y mínimo, también se usa replace para dejar sólo números
         if(time >= 0 && time <= 120){
-            setTaskValues({...taskValues, estimatedTime: time})
+            setTaskValues({...taskValues, estimatedTime: time * 60})
+            setOtherInputValue(time)
             setErrorInput(false)
         }else{
             setErrorInput(true)
+            setOtherInputValue(0)
             setTaskValues({...taskValues, estimatedTime: 0})
         }
     }
 
     
-// Función para fecha YYYY/MM/DD
-    function padTo2Digits(num: any) {
-        return num.toString().padStart(2, '0');
-      }
-    function formatDate(date: any) {
-        return [
-          date.getFullYear(),
-          padTo2Digits(date.getMonth() + 1),
-          padTo2Digits(date.getDate()),
-        ].join('/');
-      }
+// Función para fecha DD/MM/YYY
+    // function padTo2Digits(num: any) {
+    //     return num.toString().padStart(2, '0');
+    //   }
+    // function formatDate(date: any) {
+    //     return [
+    //         padTo2Digits(date.getDate()),
+    //         padTo2Digits(date.getMonth() + 1),
+    //         date.getFullYear(),
+    //     ].join('/');
+    //   }
     
-    var dateFunction = ()=> {
-        let dateVar = new Date()
-        const dateCreated = formatDate(dateVar)
-        return dateCreated
-    }
+    // var dateFunction = ()=> {
+    //     let dateVar = new Date()
+    //     const dateCreated = formatDate(dateVar)
+    //     return dateCreated
+    // }
 
 // 
     const uploadTask = async () => {
-        let date = dateFunction()
         if(selectDo !== ''){
-            setTaskValues({...taskValues, lastUpdate: date})
             try {
               await updateTask(selectDo, taskValues);
               alert("Tarea actualizada correctamente")
@@ -119,7 +126,6 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
             }
         }
         else{
-            setTaskValues({...taskValues, creationDate: date, lastUpdate: date})
             try {
               await createTask(taskValues);
               alert("Tarea creada correctamente")
@@ -162,7 +168,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
                     </FormControl>
                     {otherInput &&
                         <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                            <TextField error={errorInput} helperText={errorInput && "Sólo valores entre 1 a 120 minutos (dos horas)"} name="customEstimatedTime" id="other-duration" label="Duración en minutos" variant="outlined" onChange={handleInputChange} value={taskValues.estimatedTime} />
+                            <TextField error={errorInput} helperText={errorInput && "Sólo valores entre 1 a 120 minutos (dos horas)"} name="customEstimatedTime" id="other-duration" label="Duración en minutos" variant="outlined" onChange={handleInputChange} value={otherInputValue} />
                         </FormControl>
                     }
                 </div>

@@ -21,8 +21,15 @@ export default function Home() {
   }
 
   React.useEffect(()=>{
-    getTasks()
+    getTasks();
   }, [])
+
+  React.useEffect(()=>{
+    if(localStorage.getItem("task") !== ''){
+      setSelectDo(localStorage.getItem("task")!)
+      setIsEdit(false)
+    }
+  }, [localStorage])
 
   const deleteTaskFunction = async(id: string) => {
     if (window.confirm("¿Estás seguro de eliminar esta tarea?")) {
@@ -33,13 +40,13 @@ export default function Home() {
 
 
   var selectedTask = (idTask : string, isEdit: boolean)=>{
-    console.log(isEdit)
     setIsEdit(isEdit)
     setSelectDo(idTask)
   }
 
   const addTaks = async() => {
     setSelectDo('')
+    localStorage.setItem("taks", '')
     await getTasks()
   }
 

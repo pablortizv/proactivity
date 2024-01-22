@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { VictoryChart, VictoryBar, VictoryAxis } from 'victory';
+import { dateFunction } from '../functions/dateFunctions';
 
 interface ChartTaskProps {
     taskList: any
@@ -65,9 +66,21 @@ function ChartTask({ taskList }: ChartTaskProps) {
         return dayTask
     }
 
+    const averageTime = () => {
+        let tasks = getTaskComplete();
+        let taskLength = tasks.length
+        let totalTime = 0
+        tasks.map((task: any) => {
+            let difTimes = task.estimatedTime - task.realTime
+            totalTime += difTimes
+        })
+        return totalTime / taskLength
+    }
+
     return (
         <div >
-            <h1>Tareas finalizadas: 0</h1>
+            <h1>Tareas finalizadas: {getTaskComplete().length}</h1>
+            <h1>Promedio: {averageTime()}</h1>
             <VictoryChart width={400}
                 domainPadding={{ x: 0 }}
             >

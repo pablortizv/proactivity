@@ -11,6 +11,7 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import Timer from './timer';
 import Modal from './modal';
 import { getTask, updateTask } from "../firebase/api";
+import { dateFunction } from '../functions/dateFunctions';
 
 interface InProgressDoProps {
     selectDo: string;
@@ -25,41 +26,32 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
     // Utilicé estilos de Tailwind en este componente para mostrar el uso del mismo
     const [duration, setDuration] = React.useState<any | null>(null);
     const [modalText, setModalText] = React.useState(initialModalText)
-    const [inProgress, setInProgress] = React.useState(false)
+    const [inProgress, setInProgress] = React.useState("start")
     const [openModal, setOpenModal] = React.useState(false)
     const [taskInProgress, setTaskInProgress] = React.useState<any | null>(null)
 
-    
+    // Nos traemos la tarea en base a su id
     const getTaskById = async (id : string) => {
         try {
             const doc = await getTask(id);
-            const value = {
-                creationDate: doc?.data()?.creationDate,
-                description: doc?.data()?.description,
-                estimatedTime: doc?.data()?.estimatedTime,
-                lastUpdate: doc?.data()?.lastUpdate,
-                name: doc?.data()?.name,
-                realTime: doc?.data()?.realTime,
-                status: doc?.data()?.status,
-                user: doc?.data()?.user
-            }
-            setTaskInProgress({ ...value });
+            setTaskInProgress(doc.data());
+            localStorage.setItem("task", id)
         } catch (error) {
             console.error(error);
         }
     };
-
+    // Detectamos cambios en la tarea seleccionada
     React.useEffect(() => {
         getTaskById(selectDo)
     }, [selectDo])
 
     const checkDuration = ()=> {
-        if(taskInProgress?.realTime == 0 && taskInProgress.status == "complete"){
+        if(taskInProgress?.status == "complete"){
             return 0
         } else if(taskInProgress?.realTime !==0 ){
-            return taskInProgress?.realTime! * 60
-        } else if(taskInProgress.estimatedTime !==0 ){
-            return taskInProgress.estimatedTime! * 60
+            return( taskInProgress?.estimatedTime - taskInProgress?.realTime)
+        } else if(taskInProgress.estimatedTime !==0  && taskInProgress?.realTime ==0 ){
+            return taskInProgress?.estimatedTime!
         } else{
             return 0
         }
@@ -70,46 +62,51 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
 
     // Inicio controles de tiempo
     React.useEffect(() => {
-        if (duration == 0) {
+        if (duration == 0 ) {
             control("endTime")
-        } else if (inProgress) {
+        } else if (inProgress == "play") {
             countDown(duration)
+        } else if(inProgress == "stop"){
+            setDuration(taskInProgress?.estimatedTime);
         }
-
     }, [duration, inProgress])
 
-    const countDown = async (time: number) => {
-        setTimeout(() => setDuration(time - 1), 1000)
+    const countDown = async (time: number) => { 
+        setTimeout(() => {
+            let count = time - 1 
+            setDuration(time - 1)
+            setTaskInProgress({...taskInProgress,  realTime: (taskInProgress.estimatedTime - count), lastUpdate: dateFunction()})
+            checkTask()
+        }, 1000)
+        
     }
 
     const control = async(typeControl: string) => {
         // switch case para centralizar funcionalidad de los controles
         switch (typeControl) {
             case "play":
-                setInProgress(true)
+                setInProgress(typeControl)
                 break;
             case "pause":
-                setInProgress(false)
+                setInProgress(typeControl)
                 break;
             case "reset":
-                setInProgress(false);
                 setModalText({title:"¿Seguro que deseas reiniciar esta tarea?",
                 body:"El progreso de la tarea se perderá y regresará al tiempo total estimado"})
                 handleModal()
                 break;
             case "stop":
-                setInProgress(false);
-                setDuration(taskInProgress?.estimatedTime);
+                setInProgress(typeControl);
                 break;
             case "check":
-                setTaskInProgress({...taskInProgress,  realTime: duration, status: "complete"})
-                setInProgress(false);
+                setTaskInProgress({...taskInProgress, status: "complete"})
+                setInProgress("pause");
                 setModalText({title:"¿Seguro que deseas completar esta tarea?",
                 body:"El progreso de la tarea se guardará al continuar"})
                 handleModal()
             case "endTime":
-                setTaskInProgress({...taskInProgress,  realTime: 0, status: "complete"})
-                setInProgress(false);
+                setTaskInProgress({...taskInProgress,  realTime: taskInProgress.estimatedTime, status: "complete", lastUpdate: dateFunction()})
+                setInProgress(typeControl);
                 checkTask()
             default:
                 break;
@@ -120,13 +117,13 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
     const handleModal = () => {
         setOpenModal(!openModal)
     }
-    
+
     const handleConfirm = () => {
         if(taskInProgress.status == "complete"){
             checkTask()
         }else{
             setDuration(taskInProgress?.estimatedTime ? taskInProgress.estimatedTime : 0);
-            setInProgress(true);
+            setInProgress("play");
         }
         handleModal()
     }
@@ -153,7 +150,7 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
                 <div className='basis-1/4 sm:basis-1/2'>
                     <Timer totalSeconds={duration} />
                     {/* Botones de control de la tarea curso */}
-                    {inProgress ? <PauseIcon onClick={() => control("pause")} /> : <PlayArrowIcon onClick={() => control("play")} />}
+                    {inProgress == "play" ? <PauseIcon onClick={() => control("pause")} /> : <PlayArrowIcon onClick={() => control("play")} />}
                     <StopIcon onClick={() => control("stop")}/>
                     <RestoreIcon onClick={() => control("reset")} />
                     <DoneIcon onClick={() => control("check")} />
