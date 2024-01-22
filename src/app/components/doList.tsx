@@ -130,7 +130,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
             control={<Checkbox name="long" checked={checked["long"]} onChange={handleChangeCheck} />}
           />
         </Box>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className='table-content-resp'>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -166,7 +166,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
 {/* Finalizadas */}
     <CustomTabPanel value={tabSelected} index={1}>
     <ButtonCreate title='Crear 50 tareas' onClick={()=>createFinishedTasks()}/>
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} className='table-content-resp'>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
