@@ -38,7 +38,6 @@ function ChartTask({ taskList }: ChartTaskProps) {
             const formattedDate = dateFunction(i)
             week.push(formattedDate)
           }
-          console.log(week)
         return week
     }
 
