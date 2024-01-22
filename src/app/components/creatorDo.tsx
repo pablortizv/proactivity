@@ -67,7 +67,6 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     // Validamos el campo estimatedTime así como el customEstimatedTime si seleccionamos otro
     const handleInputChange = (e: any) => {
         const {name , value} = e.target;
-
         if(value == "otro" && name == "estimatedTime"){
             setTaskValues({...taskValues, estimatedTime: 0})
             setOtherInput(true);

@@ -6,6 +6,7 @@ interface TimerProps {
 }
 
 function Timer({ totalMinutes, totalSeconds }: TimerProps) {
+    // Reusable si se mandan minutos o segundos
     let totalSec = 0
     if(totalMinutes){
         totalSec = totalMinutes * 60

@@ -47,7 +47,7 @@ export default function Home() {
   };
 
   // Función para seleccionar una tarea del listado
-  var selectedTask = (idTask : string, isEdit: boolean)=>{
+  const selectedTask = (idTask : string, isEdit: boolean)=>{
     setIsEdit(isEdit)
     setSelectDo(idTask)
     setShowOptions(true)
