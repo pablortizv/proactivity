@@ -8,9 +8,7 @@ interface ChartTaskProps {
     taskList: any
   }
 
-function ChartTask({ taskList }: ChartTaskProps) {
-    // const [taskList, setTaskList] = React.useState<string[]>([])
-    
+function ChartTask({ taskList }: ChartTaskProps) {    
 
     const getTaskComplete = () => {
         let qantity = 0
@@ -27,9 +25,9 @@ function ChartTask({ taskList }: ChartTaskProps) {
     }
     
 
-    React.useEffect(()=>{
-        console.log(getTaskinDays())
-      }, [])
+    // React.useEffect(()=>{
+    //     // console.log(getTaskinDays())
+    //   }, [])
 
 // Obtener días de la semana que pasó
     const getWeek = () => {

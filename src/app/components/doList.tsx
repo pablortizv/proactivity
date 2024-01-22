@@ -108,7 +108,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
   return (
     <Box sx={{ width: '100%' }}>
     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      <Tabs value={tabSelected} onChange={handleChange} aria-label="basic tabs example">
+      <Tabs value={tabSelected} onChange={handleChange} className='tabs'>
         <Tab label="Tareas pendientes" {...a11yProps(0)} />
         <Tab label="Tareas finalizadas" {...a11yProps(1)} />
         <Tab label="Última semana" {...a11yProps(2)} />
@@ -165,7 +165,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
     </CustomTabPanel>
 {/* Finalizadas */}
     <CustomTabPanel value={tabSelected} index={1}>
-    <ButtonCreate title='Crear tareas' onClick={()=>createFinishedTasks()}/>
+    <ButtonCreate title='Crear 50 tareas' onClick={()=>createFinishedTasks()}/>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

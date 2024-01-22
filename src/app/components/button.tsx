@@ -8,7 +8,7 @@ interface ButtonProps {
 
 function ButtonCreate({ title, disabled, onClick }: ButtonProps) {
     return (
-      <Button onClick={onClick} disabled={disabled && disabled} variant="outlined" size="large" >{title}</Button>
+      <Button onClick={onClick} disabled={disabled && disabled} variant="outlined" size="large"  className="button">{title}</Button>
     );
   }
 

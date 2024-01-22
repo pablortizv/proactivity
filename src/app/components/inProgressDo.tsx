@@ -23,7 +23,6 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
         title:"¿Seguro que deseas reiniciar esta tarea?",
         body:"El progreso de la tarea se perderá y regresará al tiempo total estimado"
     }
-    // Utilicé estilos de Tailwind en este componente para mostrar el uso del mismo
     const [duration, setDuration] = React.useState<any | null>(null);
     const [modalText, setModalText] = React.useState(initialModalText)
     const [inProgress, setInProgress] = React.useState("start")
@@ -45,6 +44,7 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
         getTaskById(selectDo)
     }, [selectDo])
 
+    // Verificamos la duración dependiendo si está como completa o si tiene avance previo
     const checkDuration = ()=> {
         if(taskInProgress?.status == "complete"){
             return 0
@@ -71,10 +71,12 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
         }
     }, [duration, inProgress])
 
+
     const countDown = async (time: number) => { 
         setTimeout(() => {
             let count = time - 1 
             setDuration(time - 1)
+            // se actualiza y se manda a guardar por segundo, se puede cambiar por localStorage y evitar mandar muchas solicitudes al back (en este caso se optó así para mostrar ambos casos ya que guardamos en localstorage el id para persistir el estado)
             setTaskInProgress({...taskInProgress,  realTime: (taskInProgress.estimatedTime - count), lastUpdate: dateFunction()})
             checkTask()
         }, 1000)
@@ -119,6 +121,7 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
     }
 
     const handleConfirm = () => {
+        // si la tarea está completa la mandamos a la función checkTask
         if(taskInProgress.status == "complete"){
             checkTask()
         }else{
@@ -129,6 +132,7 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
     }
 
     const checkTask = () => {
+        // hacemos update de la tarea actual que ya fue completada
         try {
             updateTask(selectDo, taskInProgress); 
         } catch (error) {
@@ -137,25 +141,28 @@ function InProgressDo({ selectDo, addTask }: InProgressDoProps) {
     }
 
     return (
-        <div className='flex flex-row bg-slate-50 shadow'>
-            <div className=' basis-1/4 content-center justify-center p-8'>
+        <div className='shadow control-timer'>
+            <div className=' content-center justify-center button-container '>
                 <ButtonCreate onClick={addTask} title={"Nueva Tarea"} disabled={false}></ButtonCreate>
             </div>
-            <div className='basis-3/4 w-full flex flex-row p-8'>
-                <div className='basis-3/4 sm:basis-1/2'>
+            <div className='flex flex-row control-container'>
+                <div className='task-info-inprogress'>
                     <Typography variant="caption" display="block" gutterBottom>Tarea en proceso</Typography>
-                    <Typography variant="subtitle1" gutterBottom>{taskInProgress?.name}</Typography>
-                    <Typography variant="subtitle2" gutterBottom>{taskInProgress?.description}</Typography>
+                    <Typography variant="h4" gutterBottom>{taskInProgress?.name}</Typography>
+                    <Typography variant="h6" gutterBottom>{taskInProgress?.description}</Typography>
                 </div>
-                <div className='basis-1/4 sm:basis-1/2'>
+                
+            </div>
+            <div className='controls-container'>
                     <Timer totalSeconds={duration} />
                     {/* Botones de control de la tarea curso */}
-                    {inProgress == "play" ? <PauseIcon onClick={() => control("pause")} /> : <PlayArrowIcon onClick={() => control("play")} />}
-                    <StopIcon onClick={() => control("stop")}/>
-                    <RestoreIcon onClick={() => control("reset")} />
-                    <DoneIcon onClick={() => control("check")} />
+                    <div className='buttons-control'>
+                        {inProgress == "play" ? <PauseIcon sx={{ color: '#7535cc'}} onClick={() => control("pause")} /> : <PlayArrowIcon sx={{ color: '#7535cc'}} onClick={() => control("play")} />}
+                        <StopIcon sx={{ color: '#7535cc'}}  onClick={() => control("stop")}/>
+                        <RestoreIcon  sx={{ color: '#7535cc'}} onClick={() => control("reset")} />
+                        <DoneIcon sx={{ color: '#7535cc'}} onClick={() => control("check")} />
+                    </div>
                 </div>
-            </div>
             <Modal
                 openModal={openModal}
                 handleClose={() => handleModal() }

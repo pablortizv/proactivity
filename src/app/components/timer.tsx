@@ -22,7 +22,7 @@ function Timer({ totalMinutes, totalSeconds }: TimerProps) {
     minutes = min < 10 ? '0' + min : min
     hours = h < 10 ? '0' + h : h
     return (
-        <div>{hours + ":" + minutes + ":" + seconds}</div>
+        <div className='timer'>{hours + ":" + minutes + ":" + seconds}</div>
     );
 }
 

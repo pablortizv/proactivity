@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// Configuración de firebase se guarda en .env para evitar mal uso
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIRESTORE_APIKEY,
   authDomain: process.env.NEXT_PUBLIC_FIRESTORE_AUTHDOMAIN,
@@ -12,7 +12,7 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIRESTORE_MEASUREMENT_ID
   };
   
-// Initialize Firebase
+// Inicializamos Firebase
 initializeApp(firebaseConfig);
 
 export const db = getFirestore();

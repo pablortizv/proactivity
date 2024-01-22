@@ -18,6 +18,7 @@ interface CreatorDoProps {
   }
   
 function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
+    // datos iniciales que se guardan en taskValues
     const initialValues = {
         name: "",
         description: "",
@@ -26,7 +27,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
         status:"created",
         creationDate:"",
         lastUpdate: "",
-        user:"amin"
+        user:"admin"
     }
     const [selectDuration, setSelectDuration] = React.useState('');
     const [otherInput, setOtherInput] = React.useState(false);
@@ -35,6 +36,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     const [taskValues, setTaskValues] = React.useState(initialValues)
 
     const getTaskById = async (id : string) => {
+    // Se consulta task con el id previamente seleccionado y se llena en base al initialValues y actualizamos el campo lastUpdate
         try {
             const doc = await getTask(id);
             const value = {
@@ -53,15 +55,16 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
         }
     };
 
+    // Verificamos si hay una tarea seleccionada o creamos una nueva
     React.useEffect(() => {
         if(selectDo !== ''){
             getTaskById(selectDo)
         } else{
             setTaskValues({...taskValues, creationDate: dateFunction(), lastUpdate: dateFunction()})
-        }
-        
+        }     
     }, [selectDo])
 
+    // Validamos el campo estimatedTime así como el customEstimatedTime si seleccionamos otro
     const handleInputChange = (e: any) => {
         const {name , value} = e.target;
 
@@ -72,6 +75,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
         } else if(value !== "otro" && name == "estimatedTime"){
             setOtherInput(false);
             setSelectDuration(value);
+            // Convertimos minutos a segundos
             setTaskValues({...taskValues, [name]: value * 60})
         } else if(name == "customEstimatedTime"){
             handleChangeOtherTime(value)
@@ -82,39 +86,23 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
     }
 
     const handleChangeOtherTime = (time: number)=>{
-        // Se cambia a number para poder verificar tiempo máximo y mínimo, también se usa replace para dejar sólo números
+        // Se valida si time es mayor a 0 y menor a 120 minutos
         if(time >= 0 && time <= 120){
+            // Convertimos minutos a segundos
             setTaskValues({...taskValues, estimatedTime: time * 60})
             setOtherInputValue(time)
             setErrorInput(false)
         }else{
+            // si no pasa se regresa el valor a 0
             setErrorInput(true)
             setOtherInputValue(0)
             setTaskValues({...taskValues, estimatedTime: 0})
         }
     }
 
-    
-// Función para fecha DD/MM/YYY
-    // function padTo2Digits(num: any) {
-    //     return num.toString().padStart(2, '0');
-    //   }
-    // function formatDate(date: any) {
-    //     return [
-    //         padTo2Digits(date.getDate()),
-    //         padTo2Digits(date.getMonth() + 1),
-    //         date.getFullYear(),
-    //     ].join('/');
-    //   }
-    
-    // var dateFunction = ()=> {
-    //     let dateVar = new Date()
-    //     const dateCreated = formatDate(dateVar)
-    //     return dateCreated
-    // }
-
-// 
+    // Función para crear tarea o actualizar
     const uploadTask = async () => {
+        // verificamos con selectDo para ver si hay una tarea previamente seleccionada
         if(selectDo !== ''){
             try {
               await updateTask(selectDo, taskValues);
@@ -135,17 +123,18 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
                 console.log(error)
             }
         }
+        setSelectDuration('')
     }
     return (
-        <div className='flex flex-row bg-slate-50 shadow'>
-            <div className=' basis-1/4 content-center justify-center p-8'>
-                <ButtonCreate title={"Guardar"} disabled={false} onClick={uploadTask}/>
+        <div className='shadow control-timer'>
+            <div className='content-center justify-center button-container'>
+                <ButtonCreate title={"Guardar"} disabled={taskValues.name == '' && selectDuration == ''} onClick={uploadTask}/>
             </div>
-            <div className='basis-3/4 w-full flex flex-row p-8'>
+            <div className=' flex flex-row control-container'>
                 <div className=' w-full'>
                     <Typography variant="caption" display="block" gutterBottom>Nueva tarea</Typography>
                     <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                        <TextField value={taskValues.name} onChange={handleInputChange} id="name" name="name" label="Nombre de la tarea" variant="outlined" />
+                        <TextField value={taskValues.name} onChange={handleInputChange} id="name" name="name" label="Nombre de la tarea" variant="outlined" className='input-form'/>
                     </FormControl>
                     <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                         <TextField  value={taskValues.description} onChange={handleInputChange} name="description" id="description" label="Descripción" multiline rows={2} variant="outlined" />
@@ -166,6 +155,7 @@ function CreatorDo({ addTask, selectDo }: CreatorDoProps) {
                             <MenuItem value={'otro'}>Otro </MenuItem>
                         </Select>
                     </FormControl>
+                    {/* Si seleccionamos otro en el selec se activa el siguiente campo */}
                     {otherInput &&
                         <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                             <TextField error={errorInput} helperText={errorInput && "Sólo valores entre 1 a 120 minutos (dos horas)"} name="customEstimatedTime" id="other-duration" label="Duración en minutos" variant="outlined" onChange={handleInputChange} value={otherInputValue} />
