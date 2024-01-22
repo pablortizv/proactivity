@@ -3,7 +3,7 @@ import { dateFunction } from "./dateFunctions";
 
 
 export const createFinishedTasks = async () => {
-    for (var i = 1; i <= 1; i++) {
+    for (var i = 1; i <= 50; i++) {
         let initialValues = {
             name: "",
             description: "",
