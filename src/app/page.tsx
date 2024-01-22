@@ -25,11 +25,11 @@ export default function Home() {
   }, [])
 
   React.useEffect(()=>{
-    if(localStorage.getItem("task") !== ''){
+    if(localStorage.getItem("task")){
       setSelectDo(localStorage.getItem("task")!)
       setIsEdit(false)
     }
-  }, [localStorage])
+  }, [])
 
   const deleteTaskFunction = async(id: string) => {
     if (window.confirm("¿Estás seguro de eliminar esta tarea?")) {
@@ -46,7 +46,7 @@ export default function Home() {
 
   const addTaks = async() => {
     setSelectDo('')
-    localStorage.setItem("taks", '')
+    localStorage.setItem("task", '')
     await getTasks()
   }
 

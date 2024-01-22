@@ -18,6 +18,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Timer from './timer';
 import ChartTask from './charts';
+import ButtonCreate from './button';
+import { createFinishedTasks } from '../functions/createFinishedTask';
 
 
 interface DoListProps {
@@ -90,11 +92,11 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
       let taskFiltered: any = [];
       taskList.map((task: any) => {
         // recorremos toda la lista para ver que taras quedan en que caso y así filtrar
-        if (checked["short"] == true && task.estimatedTime <= 30) {
+        if (checked["short"] == true && task.estimatedTime <= 1800) {
           taskFiltered.push(task)
-        } else if (checked["medium"] == true && task.estimatedTime > 30 && task.estimatedTime <= 60) {
+        } else if (checked["medium"] == true && task.estimatedTime > 1800 && task.estimatedTime < 3600) {
           taskFiltered.push(task)
-        } else if (checked["long"] == true && task.estimatedTime > 60) {
+        } else if (checked["long"] == true && task.estimatedTime >= 3600) {
           taskFiltered.push(task)
         }
       })
@@ -112,6 +114,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
         <Tab label="Última semana" {...a11yProps(2)} />
       </Tabs>
     </Box>
+{/* Pendientes */}
     <CustomTabPanel value={tabSelected} index={0}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', justifyContent: "flex-end", display:"flex" }}>
           <FormControlLabel
@@ -160,7 +163,9 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
         </Table>
       </TableContainer>
     </CustomTabPanel>
+{/* Finalizadas */}
     <CustomTabPanel value={tabSelected} index={1}>
+    <ButtonCreate title='Crear tareas' onClick={()=>createFinishedTasks()}/>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -182,7 +187,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
                     {row.name}
                   </TableCell>
                   <TableCell>{row.description}</TableCell>
-                  <TableCell align="right"><Timer totalMinutes={row.estimatedTime}/></TableCell>
+                  <TableCell align="right"><Timer totalSeconds={row.estimatedTime}/></TableCell>
                   <TableCell align="right">{row.status == "complete" && "Finalizado"}</TableCell>
                 </TableRow>
               )})
@@ -191,6 +196,7 @@ function DoList({ selectDo, taskList, deleteTaskFunction }: DoListProps) {
         </Table>
       </TableContainer>
     </CustomTabPanel>
+{/* Última semana */}
     <CustomTabPanel value={tabSelected} index={2}>
       <ChartTask taskList={list}/>
     </CustomTabPanel>

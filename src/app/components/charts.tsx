@@ -35,15 +35,10 @@ function ChartTask({ taskList }: ChartTaskProps) {
     const getWeek = () => {
         let week:any [] = []
         for (var i = 0; i <= 6; i++) {
-            let date = new Date();
-            date.setDate(date.getDate() - i);
-            const formattedDate = date.toLocaleDateString('mx-es', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            });
+            const formattedDate = dateFunction(i)
             week.push(formattedDate)
           }
+          console.log(week)
         return week
     }
 

@@ -37,3 +37,6 @@ next-env.d.ts
 
 # firestore
 src/app/firebase/config.js
+
+#env
+.env
