@@ -61,8 +61,7 @@ function ChartTask({ taskList }: ChartTaskProps) {
         let taskLength = tasks.length
         let totalTime = 0
         tasks.map((task: any) => {
-            let difTimes = task.estimatedTime - task.realTime
-            totalTime += difTimes
+            totalTime += task.realTime
         })
         return Math.round(totalTime / taskLength)
     }
